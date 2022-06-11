@@ -1,6 +1,6 @@
-CREATE schema SPGS;
-set search_path = SPGS;
-set DATEstyle TO "ISO, DMY";
+CREATE SCHEMA SPGS;
+SET search_path = SPGS;
+SET DATEstyle TO "ISO, DMY";
 
 -- cricação das tabelas
 CREATE TABLE filial (
