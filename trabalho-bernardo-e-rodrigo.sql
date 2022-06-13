@@ -82,7 +82,7 @@ CREATE TABLE servico_carro(
 	FOREIGN KEY (codservico) REFERENCES servico(cod)
 );
 
--- INSERTs nas tabelas
+-- INSERTs nas tabelas, parte A da etapa 03:
 
 -- tabela filial
 INSERT INTO filial (cidade, dtInauguracao, qtVeiculos) VALUES ('Porto Alegre', '05/01/2010', 10);
@@ -177,3 +177,28 @@ INSERT INTO servico_carro(codCarro, codservico, dtInicio)
 	VALUES(2, 1, '27/05/2021');
 INSERT INTO servico_carro(codCarro, codservico, dtInicio)
 	VALUES(4, 2, '28/05/2021');
+	
+-- Consultas
+
+-- B: Exibir o nome de todos os colaboradores, assim como suas funções
+SELECT nome, funcao
+FROM colaborador;
+
+-- C: Exibir o nome dos clientes que realizaram um pagamento, assim como o valor total pago.
+SElECT c.nome, SUM(p.valor)
+FROM cliente c, pagamento p
+WHERE c.cod = p.codCliente
+GROUP BY c.nome;
+
+-- D: Exibir o nome dos colaboradores que estão ativos e suas funções
+SELECT c.nome, c.funcao
+FROM colaborador c INNER JOIN colaborador_servico cs
+	ON cs.codColaborador = c.cod
+WHERE cS.ativo IS true;
+
+-- E: Exibir o nome dos colaboradores que estão ativos, suas funções, a descrição dos serviçoes que estão sendo feitos, assim como o valor da mão de obra
+SELECT c.nome, c.funcao, s.descricao, s.valorMaoObra
+FROM colaborador c, colaborador_servico cs, servico s
+WHERE ((cs.codColaborador = c.cod) and (cs.codServico = s.cod)) and (cs.ativo IS true);
+
+-- F: 
