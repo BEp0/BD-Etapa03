@@ -201,4 +201,30 @@ SELECT c.nome, c.funcao, s.descricao, s.valorMaoObra
 FROM colaborador c, colaborador_servico cs, servico s
 WHERE ((cs.codColaborador = c.cod) and (cs.codServico = s.cod)) and (cs.ativo IS true);
 
--- F: 
+-- F: Exibir o nome dos colaboradores que estão ativos, suas funções, a descrição dos serviçoes que estão sendo feitos, assim como o valor da mão de obra
+SELECT c.nome, c.funcao, s.descricao, s.valorMaoObra
+FROM colaborador c INNER JOIN colaborador_servico cs 
+	ON c.cod = cs.codColaborador
+	INNER JOIN servico s 
+	ON s.cod = cs.codServico
+WHERE cs.ativo IS true;
+
+-- G: Mostrar a descricao do servico e seu status, o modelo do carro e seu tipo de combustível e o nome do cliente e seu cpf dos serviços pendentes
+SELECT s.descricao, sc.status, ca.modelo, ca.tipoCombustivel, cl.nome, cl.cpf
+FROM carro ca, cliente cl, servico_carro sc, servico s
+WHERE (ca.cod = sc.codCarro) AND (s.cod = sc.codServico) AND (ca.codCliente = cl.cod) AND (sc.status ILIKE 'pendente');
+
+-- H: Exibir o código e nome dos colaboradores que não terminaram um serviço
+SELECT DISTINCT c.cod, c.nome
+FROM colaborador_servico cs, colaborador c
+WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL);
+
+-- I: Exibir o código e nome dos colaboradores que não terminaram um serviço e comecem com 'B'
+SELECT DISTINCT c.cod, c.nome
+FROM colaborador_servico cs, colaborador c
+WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like 'B%');
+
+-- J: Exibir o código e nome dos colaboradores que não terminaram um serviço e que tenha 5 letras
+SELECT DISTINCT c.cod, c.nome
+FROM colaborador_servico cs, colaborador c
+WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like '_____');
