@@ -4,11 +4,11 @@ SET DATEstyle TO "ISO, DMY";
 
 -- cricação das tabelas
 CREATE TABLE filial (
-	codFilial SERIAL, 
+	cod SERIAL, 
 	cidade VARCHAR(255) NOT NULL, 
 	dtInauguracao DATE NOT NULL, 
 	qtVeiculos INT NOT NULL CHECK(qtVeiculos between 0 and 20),
-	PRIMARY KEY (codFilial)
+	PRIMARY KEY (cod)
 );
 
 CREATE TABLE colaborador(
@@ -92,19 +92,19 @@ INSERT INTO filial (cidade, dtInauguracao, qtVeiculos) VALUES ('Sapiranga', '05/
 INSERT INTO filial (cidade, dtInauguracao, qtVeiculos) VALUES ('Gravataí', '25/02/2018', 13);
 
 -- colaboradores
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao, dtAdmissao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao, dtAdmissao) 
     VALUES (1, '20217852033', 'Bernardo', 'Centro', 1200, 'Mecanico', '10/06/2022');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao, dtAdmissao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao, dtAdmissao) 
     VALUES (2, '90641865023', 'Nicolas', 'Mathias Velho', 2000, 'Consultor', '20/06/2022');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao, dtAdmissao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao, dtAdmissao) 
     VALUES (3, '56916504080', 'João', 'Campina', 1300, 'Mecanico', '20/06/2022');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao) 
     VALUES (4, '42295174082', 'Bruno', 'Ouro Branco', 1200, 'Mecanico');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao) 
     VALUES (5, '20217854653', 'Julio', 'Ideal', 1200, 'Mecanico');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao, dtAdmissao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao, dtAdmissao) 
     VALUES (3, '51034529013', 'Rodrigo', 'Boa Vista', 2000, 'Consultor', '22/04/2022');
-INSERT INTO colaborador (codFilial, cpf, nome, endereco, salario, funcao, dtAdmissao) 
+INSERT INTO colaborador (cod, cpf, nome, endereco, salario, funcao, dtAdmissao) 
     VALUES (2, '17019095020', 'Pedro', 'Centro', 1300, 'Mecanico', '22/04/2022');
 	
 -- servico
