@@ -44,7 +44,7 @@ CREATE TABLE colaborador_servico(
 	
 CREATE TABLE cliente(
 	cod SERIAL,
-	cpf VARCHAR(30) NOT NULL unique,
+	cpf VARCHAR(30) NOT NULL UNIQUE,
 	nome VARCHAR(255) NOT NULL,
 	dtNascimento DATE NOT NULL,
 	pagamentoFinalizado BOOLEAN DEFAULT false,
