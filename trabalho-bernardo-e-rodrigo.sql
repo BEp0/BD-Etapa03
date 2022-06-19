@@ -228,3 +228,51 @@ WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like 'B%');
 SELECT DISTINCT c.cod, c.nome
 FROM colaborador_servico cs, colaborador c
 WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like '_____');
+
+--K) Mostrar o nome e data de admissão dos colaboradores que estão alocados na filial da cidade com nome igual a "Canoas"
+SELECT colab.nome, to_char(colab.dtadmissao,'dd/MM/yyyy') AS dtAdmissao FROM colaborador colab WHERE colab.codfilial 
+	IN (SELECT codfilial FROM filial WHERE cidade = 'Canoas');
+	
+--L) Mostrar a descrição, data de início e data de fim dos serviços iniciados por colaboradores menos o registro com a menor data inicial.
+SELECT DISTINCT descricao, dtinicio, dtfim FROM servico sv 
+	JOIN colaborador_servico cs ON sv.cod = cs.codservico
+	WHERE cs.dtinicio > ANY (SELECT dtINicio FROM colaborador_servico)
+	ORDER BY dtinicio DESC;
+
+--M) Mostrar o código da nota fiscal, nome e valor dos pagamentos onde o nome dos clientes tem 5 letras
+SELECT p.codnf, c.nome, p.valor FROM pagamento p
+	JOIN cliente c ON p.codcliente = c.cod
+	WHERE exists (SELECT * FROM cliente WHERE c.cod = p.codcliente AND c.nome ilike '_____'); 
+	
+--O) Mostra o valor médio da mão de obra dos serviços ativos agrupando pelos nomes dos colaboradores
+SELECT cb.nome,avg(sv.valormaoobra) AS mediaValor 
+	FROM colaborador_servico cs
+	JOIN servico sv ON cs.codservico = sv.cod
+	JOIN colaborador cb ON cs.codcolaborador = cb.cod
+	WHERE cs.ativo = true
+	GROUP BY cb.nome;
+
+--P) Mostrar o valor da soma dos pagamentos de cada cliente porém apenas nos casos em que a soma é maior do que 1200
+SELECT cl.nome, SUM(valor) AS valorTotal 
+	FROM pagamento pg
+	JOIN cliente cl ON pg.codcliente = cl.cod
+	GROUP BY cl.nome HAVING SUM(valor) > 1200;
+
+--Q) Excluir os registros de colaboradores da função consultor que não estão alocados em serviços
+DELETE FROM colaborador cb WHERE funcao='Consultor'
+	AND NOT EXISTS (SELECT * FROM colaborador_servico WHERE codColaborador = cb.cod);
+
+--R) Atualizar o salário e a data de admissão dos colaboradores mecânicos 
+UPDATE colaborador SET salario=1800, dtadmissao=CURRENT_DATE WHERE funcao = 'Mecanico';
+
+--S)Remover a coluna tipo de combustíveo da tabela carro
+ALTER TABLE carro DROP column tipocombustivel;
+
+--T)Criar uma visão para mostrar o nome do colaborador, descrição do serviço e o valor da mão de obra de colaboradores em serviço
+CREATE view servicosAtivos AS 
+	SELECT cl.nome, sc.descricao, sc.valormaoobra FROM colaborador cl, colaborador_servico cs, servico sc 
+	WHERE cl.cod = cs.codColaborador
+	AND cs.codservico = sc.cod
+	AND cs.ativo = true;
+	
+SELECT * FROM servicosAtivos;	
