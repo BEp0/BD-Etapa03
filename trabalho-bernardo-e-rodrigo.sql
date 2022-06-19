@@ -182,69 +182,84 @@ INSERT INTO servico_carro(codCarro, codservico, dtInicio)
 
 -- B: Exibir o nome de todos os colaboradores, assim como suas funções
 SELECT nome, funcao
-FROM colaborador;
+	FROM colaborador;
 
 -- C: Exibir o nome dos clientes que realizaram um pagamento, assim como o valor total pago.
 SElECT c.nome, SUM(p.valor)
-FROM cliente c, pagamento p
-WHERE c.cod = p.codCliente
-GROUP BY c.nome;
+	FROM cliente c, pagamento p
+	WHERE c.cod = p.codCliente
+	GROUP BY c.nome;
 
 -- D: Exibir o nome dos colaboradores que estão ativos e suas funções
 SELECT c.nome, c.funcao
-FROM colaborador c INNER JOIN colaborador_servico cs
-	ON cs.codColaborador = c.cod
-WHERE cS.ativo IS true;
+	FROM colaborador c INNER JOIN colaborador_servico cs
+		ON cs.codColaborador = c.cod
+	WHERE cS.ativo IS true;
 
 -- E: Exibir o nome dos colaboradores que estão ativos, suas funções, a descrição dos serviçoes que estão sendo feitos, assim como o valor da mão de obra
 SELECT c.nome, c.funcao, s.descricao, s.valorMaoObra
-FROM colaborador c, colaborador_servico cs, servico s
-WHERE ((cs.codColaborador = c.cod) and (cs.codServico = s.cod)) and (cs.ativo IS true);
+	FROM colaborador c, colaborador_servico cs, servico s
+	WHERE ((cs.codColaborador = c.cod) and (cs.codServico = s.cod)) and (cs.ativo IS true);
 
 -- F: Exibir o nome dos colaboradores que estão ativos, suas funções, a descrição dos serviçoes que estão sendo feitos, assim como o valor da mão de obra
 SELECT c.nome, c.funcao, s.descricao, s.valorMaoObra
-FROM colaborador c INNER JOIN colaborador_servico cs 
-	ON c.cod = cs.codColaborador
-	INNER JOIN servico s 
-	ON s.cod = cs.codServico
-WHERE cs.ativo IS true;
+	FROM colaborador c 
+	INNER JOIN colaborador_servico cs ON c.cod = cs.codColaborador
+	INNER JOIN servico s ON s.cod = cs.codServico
+	WHERE cs.ativo IS true;
 
 -- G: Mostrar a descricao do servico e seu status, o modelo do carro e seu tipo de combustível e o nome do cliente e seu cpf dos serviços pendentes
 SELECT s.descricao, sc.status, ca.modelo, ca.tipoCombustivel, cl.nome, cl.cpf
-FROM carro ca, cliente cl, servico_carro sc, servico s
-WHERE (ca.cod = sc.codCarro) AND (s.cod = sc.codServico) AND (ca.codCliente = cl.cod) AND (sc.status ILIKE 'pendente');
+	FROM carro ca, cliente cl, servico_carro sc, servico s
+	WHERE (ca.cod = sc.codCarro)
+		AND (s.cod = sc.codServico) 
+		AND (ca.codCliente = cl.cod) 
+		AND (sc.status ILIKE 'pendente');
 
 -- H: Exibir o código e nome dos colaboradores que não terminaram um serviço
 SELECT DISTINCT c.cod, c.nome
-FROM colaborador_servico cs, colaborador c
-WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL);
+	FROM colaborador_servico cs, colaborador c
+	WHERE (c.cod = cs.codColaborador) 
+		AND (cs.dtfim IS NULL);
 
 -- I: Exibir o código e nome dos colaboradores que não terminaram um serviço e comecem com 'B'
 SELECT DISTINCT c.cod, c.nome
-FROM colaborador_servico cs, colaborador c
-WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like 'B%');
+	FROM colaborador_servico cs, colaborador c
+	WHERE (c.cod = cs.codColaborador) 
+		AND (cs.dtfim IS NULL) 
+		AND (c.nome like 'B%');
 
 -- J: Exibir o código e nome dos colaboradores que não terminaram um serviço e que tenha 5 letras
 SELECT DISTINCT c.cod, c.nome
-FROM colaborador_servico cs, colaborador c
-WHERE (c.cod = cs.codColaborador) AND (cs.dtfim IS NULL) AND (c.nome like '_____');
+	FROM colaborador_servico cs, colaborador c
+	WHERE (c.cod = cs.codColaborador) 
+		AND (cs.dtfim IS NULL) 
+		AND (c.nome like '_____');
 
---K) Mostrar o nome e data de admissão dos colaboradores que estão alocados na filial da cidade com nome igual a "Canoas"
-SELECT colab.nome, to_char(colab.dtadmissao,'dd/MM/yyyy') AS dtAdmissao FROM colaborador colab WHERE colab.codfilial 
-	IN (SELECT codfilial FROM filial WHERE cidade = 'Canoas');
+--K: Mostrar o nome e data de admissão dos colaboradores que estão alocados na filial da cidade com nome igual a "Canoas"
+SELECT colab.nome, to_char(colab.dtadmissao,'dd/MM/yyyy') AS dtAdmissao 
+	FROM colaborador colab
+	WHERE colab.codfilial 
+		IN (
+			SELECT codfilial 
+			FROM filial
+			WHERE cidade = 'Canoas');
 	
---L) Mostrar a descrição, data de início e data de fim dos serviços iniciados por colaboradores menos o registro com a menor data inicial.
-SELECT DISTINCT descricao, dtinicio, dtfim FROM servico sv 
+--L: Mostrar a descrição, data de início e data de fim dos serviços iniciados por colaboradores menos o registro com a menor data inicial.
+SELECT DISTINCT descricao, dtinicio, dtfim
+	FROM servico sv 
 	JOIN colaborador_servico cs ON sv.cod = cs.codservico
-	WHERE cs.dtinicio > ANY (SELECT dtINicio FROM colaborador_servico)
+	WHERE cs.dtinicio > ANY (
+		SELECT dtINicio FROM colaborador_servico)
 	ORDER BY dtinicio DESC;
 
---M) Mostrar o código da nota fiscal, nome e valor dos pagamentos onde o nome dos clientes tem 5 letras
-SELECT p.codnf, c.nome, p.valor FROM pagamento p
+--M: Mostrar o código da nota fiscal, nome e valor dos pagamentos onde o nome dos clientes tem 5 letras
+SELECT p.codnf, c.nome, p.valor
+	FROM pagamento p
 	JOIN cliente c ON p.codcliente = c.cod
 	WHERE exists (SELECT * FROM cliente WHERE c.cod = p.codcliente AND c.nome ilike '_____'); 
 	
---O) Mostra o valor médio da mão de obra dos serviços ativos agrupando pelos nomes dos colaboradores
+--O: Mostra o valor médio da mão de obra dos serviços ativos agrupando pelos nomes dos colaboradores
 SELECT cb.nome,avg(sv.valormaoobra) AS mediaValor 
 	FROM colaborador_servico cs
 	JOIN servico sv ON cs.codservico = sv.cod
@@ -252,27 +267,33 @@ SELECT cb.nome,avg(sv.valormaoobra) AS mediaValor
 	WHERE cs.ativo = true
 	GROUP BY cb.nome;
 
---P) Mostrar o valor da soma dos pagamentos de cada cliente porém apenas nos casos em que a soma é maior do que 1200
+--P: Mostrar o valor da soma dos pagamentos de cada cliente porém apenas nos casos em que a soma é maior do que 1200
 SELECT cl.nome, SUM(valor) AS valorTotal 
 	FROM pagamento pg
 	JOIN cliente cl ON pg.codcliente = cl.cod
-	GROUP BY cl.nome HAVING SUM(valor) > 1200;
+	GROUP BY cl.nome
+	HAVING SUM(valor) > 1200;
 
---Q) Excluir os registros de colaboradores da função consultor que não estão alocados em serviços
-DELETE FROM colaborador cb WHERE funcao='Consultor'
-	AND NOT EXISTS (SELECT * FROM colaborador_servico WHERE codColaborador = cb.cod);
+--Q: Excluir os registros de colaboradores da função consultor que não estão alocados em serviços
+DELETE FROM colaborador cb 
+	WHERE funcao='Consultor'
+		AND NOT EXISTS (
+			SELECT * FROM colaborador_servico WHERE codColaborador = cb.cod);
 
---R) Atualizar o salário e a data de admissão dos colaboradores mecânicos 
-UPDATE colaborador SET salario=1800, dtadmissao=CURRENT_DATE WHERE funcao = 'Mecanico';
+--R: Atualizar o salário e a data de admissão dos colaboradores mecânicos 
+UPDATE colaborador SET salario=1800, dtadmissao=CURRENT_DATE 
+	WHERE funcao = 'Mecanico';
 
---S)Remover a coluna tipo de combustíveo da tabela carro
+--S: Remover a coluna tipo de combustíveo da tabela carro
 ALTER TABLE carro DROP column tipocombustivel;
 
---T)Criar uma visão para mostrar o nome do colaborador, descrição do serviço e o valor da mão de obra de colaboradores em serviço
+--T: Criar uma visão para mostrar o nome do colaborador, descrição do serviço e o valor da mão de obra de colaboradores em serviço
 CREATE view servicosAtivos AS 
-	SELECT cl.nome, sc.descricao, sc.valormaoobra FROM colaborador cl, colaborador_servico cs, servico sc 
+	SELECT cl.nome, sc.descricao, sc.valormaoobra
+	FROM colaborador cl, colaborador_servico cs, servico sc 
 	WHERE cl.cod = cs.codColaborador
-	AND cs.codservico = sc.cod
-	AND cs.ativo = true;
+		AND cs.codservico = sc.cod
+		AND cs.ativo = true;
 	
-SELECT * FROM servicosAtivos;	
+SELECT * 
+FROM servicosAtivos;	
